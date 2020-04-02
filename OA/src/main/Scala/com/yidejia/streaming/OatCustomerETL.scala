@@ -19,7 +19,7 @@ object OatCustomerETL {
 
     def main(args: Array[String]): Unit = {
         val SparkConf = new SparkConf().setAppName("Oat_customerETL").setMaster("local[*]")
-            .set("spark.streaming.kafka.maxRatePerPartition", "5")
+            .set("spark.streaming.kafka.maxRatePerPartition", "300")
             .set("spark.streaming.backpressure.enabled", "true")
             .set("spark.streaming.stopGracefullyOnShutdown", "true")
         val ssc = new StreamingContext(SparkConf, Seconds(5))
