@@ -92,12 +92,12 @@ object OatCustomerPffxETL {
                 val sql =
                     """
                       |select  customer_id
-                      | from bigdata_profile.base_copy1
+                      | from bigdata_profile.base
                       |where customer_id=?
                     """.stripMargin
                 val SqlCustomerPffxUpdate =
                     """
-                      |update bigdata_profile.oa_copy1
+                      |update bigdata_profile.oa
                       |set skin_type=?,is_allergy=?,skin_color=?,improve_type=?
                       |where customer_id = ?
                     """.stripMargin

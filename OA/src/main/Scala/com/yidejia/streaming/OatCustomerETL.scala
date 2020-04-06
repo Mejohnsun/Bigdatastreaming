@@ -111,18 +111,18 @@ object OatCustomerETL {
                 val sql =
                     """
                       |select  id
-                      | from bigdata_profile.base_copy1
+                      | from bigdata_profile.base
                       |where customer_id=?
                     """.stripMargin
                 val SqlBaseUpdate =
                     """
-                      |update bigdata_profile.base_copy1
+                      |update bigdata_profile.base
                       |set customer_id = ?,name =?,gender =?,birthday =?,luna_birthday =?,province =?,city =?,district=?,handset =?,handset2 =?,qq_code =?,ty_code =?
                       |where customer_id = ?
                     """.stripMargin
                 val SqlOaUpdate =
                     """
-                      |update bigdata_profile.oa_copy1
+                      |update bigdata_profile.oa
                       |set total_cash=?,customer_grade=?,customer_type=?,customer_source=?,total_score=?,lock_score=?,used_score=?,can_use_score=?,traced_at=?,locked_at=?,first_sale_date=?
                       |where base_id = ?
                     """.stripMargin
@@ -130,13 +130,13 @@ object OatCustomerETL {
                 val SqlBaseInsert =
                     """
                       |insert into
-                      |bigdata_profile.base_copy1(customer_id,name,gender,birthday,luna_birthday,province,city,district,handset,handset2,qq_code,ty_code)
+                      |bigdata_profile.base(customer_id,name,gender,birthday,luna_birthday,province,city,district,handset,handset2,qq_code,ty_code)
                       |values(?,?,?,?,?,?,?,?,?,?,?,?)
                     """.stripMargin
                 val SqlOaInsert =
                     """
                       |insert into
-                      | bigdata_profile.oa_copy1(total_cash,customer_grade,customer_type,customer_source,total_score,lock_score,used_score,can_use_score,traced_at,locked_at,first_sale_date,base_id,customer_id)
+                      | bigdata_profile.oa(total_cash,customer_grade,customer_type,customer_source,total_score,lock_score,used_score,can_use_score,traced_at,locked_at,first_sale_date,base_id,customer_id)
                       |values(?,?,?,?,?,?,?,?,?,?,?,?,?)
                     """.stripMargin
                 try {
