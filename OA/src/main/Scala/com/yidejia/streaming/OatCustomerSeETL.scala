@@ -25,14 +25,15 @@ object OatCustomerSeETL {
     private val groupid = "OatCustomerSe"
 
     def main(args: Array[String]): Unit = {
-        val sparkConf = new SparkConf().setAppName("Oat_customerETL").setMaster("local[1]")
+        val sparkConf = new SparkConf().setAppName("Oat_customerETL")
+//            .setMaster("local[1]")
             .set("spark.streaming.kafka.maxRatePerPartition", "300")
             .set("spark.streaming.backpressure.enabled", "true")
             .set("spark.streaming.stopGracefullyOnShutdown", "true")
         val ssc = new StreamingContext(sparkConf, Seconds(5))
         val topics = Array(Constant.TOPIC_CUSTOMER_SE)
         val kafkaMap: Map[String, Object] = Map[String, Object](
-            "bootstrap.servers" -> "hadoop112:9092,hadoop113:9092,hadoop114:9092",
+            "bootstrap.servers" -> "172.16.50.247:9092,172.16.50.246:9092,172.16.50.246:9092",
             "key.deserializer" -> classOf[StringDeserializer],
             "value.deserializer" -> classOf[StringDeserializer],
             "group.id" -> groupid,

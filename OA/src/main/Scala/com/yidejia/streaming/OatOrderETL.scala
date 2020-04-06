@@ -3,7 +3,6 @@ package com.yidejia.streaming
 import java.sql.ResultSet
 import java.text.SimpleDateFormat
 import java.util.Date
-
 import com.alibaba.fastjson.JSONObject
 import com.yidejia.bean.Constant
 import com.yidejia.util._
@@ -14,7 +13,6 @@ import org.apache.spark.SparkConf
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.streaming.dstream.InputDStream
 import org.apache.spark.streaming.kafka010._
-
 import scala.collection.mutable
 
 object OatOrderETL {
@@ -22,14 +20,15 @@ object OatOrderETL {
     private val groupid = "OatOrder"
 
     def main(args: Array[String]): Unit = {
-        val SparkConf = new SparkConf().setAppName("OatOrderETL").setMaster("local[*]")
+        val SparkConf = new SparkConf().setAppName("OatOrderETL")
+//            .setMaster("local[*]")
             .set("spark.streaming.kafka.maxRatePerPartition", "300")
             .set("spark.streaming.backpressure.enabled", "true")
             .set("spark.streaming.stopGracefullyOnShutdown", "true")
         val ssc = new StreamingContext(SparkConf, Seconds(5))
         val topics = Array(Constant.TOPIC_ORDER)
         val kafkaMap: Map[String, Object] = Map[String, Object](
-            "bootstrap.servers" -> "hadoop112:9092,hadoop113:9092,hadoop114:9092",
+            "bootstrap.servers" -> "172.16.50.247:9092,172.16.50.246:9092,172.16.50.246:9092",
             "key.deserializer" -> classOf[StringDeserializer],
             "value.deserializer" -> classOf[StringDeserializer],
             "group.id" -> groupid,

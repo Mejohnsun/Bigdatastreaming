@@ -18,14 +18,15 @@ object OatCustomerETL {
     private val groupid = "OatCustomer"
 
     def main(args: Array[String]): Unit = {
-        val SparkConf = new SparkConf().setAppName("Oat_customerETL").setMaster("local[*]")
+        val SparkConf = new SparkConf().setAppName("Oat_customerETL")
+//            .setMaster("local[*]")
             .set("spark.streaming.kafka.maxRatePerPartition", "300")
             .set("spark.streaming.backpressure.enabled", "true")
             .set("spark.streaming.stopGracefullyOnShutdown", "true")
         val ssc = new StreamingContext(SparkConf, Seconds(5))
         val topics = Array(Constant.TOPIC_CUSTOMER)
         val kafkaMap: Map[String, Object] = Map[String, Object](
-            "bootstrap.servers" -> "hadoop112:9092,hadoop113:9092,hadoop114:9092",
+            "bootstrap.servers" -> "172.16.50.247:9092,172.16.50.246:9092,172.16.50.246:9092",
             "key.deserializer" -> classOf[StringDeserializer],
             "value.deserializer" -> classOf[StringDeserializer],
             "group.id" -> groupid,
@@ -67,7 +68,7 @@ object OatCustomerETL {
             partitions.map(item => {
                 val json = item.value()
                 val jsonObject = ParseJsonData.getJsonData(json)
-                //base
+                //base_copy1
                 val customer_id = jsonObject.getJSONArray("data").getJSONObject(0).getLong("customer_id")
                 val name = jsonObject.getJSONArray("data").getJSONObject(0).getString("customer_name")
                 val GenderNumber = jsonObject.getJSONArray("data").getJSONObject(0).getIntValue("gender")
@@ -82,7 +83,7 @@ object OatCustomerETL {
                 val handset2 = jsonObject.getJSONArray("data").getJSONObject(0).getLongValue("handset2")
                 val qq_code = jsonObject.getJSONArray("data").getJSONObject(0).getLongValue("qq_code")
                 val ty_code = jsonObject.getJSONArray("data").getJSONObject(0).getString("ty_code")
-                //OA
+                //oa_copy1
                 val total_cash = jsonObject.getJSONArray("data").getJSONObject(0).getBigDecimal("total_cash")
                 val customer_grade = jsonObject.getJSONArray("data").getJSONObject(0).getIntValue("customer_grade")
                 val customer_type = jsonObject.getJSONArray("data").getJSONObject(0).getIntValue("customer_type")
@@ -110,18 +111,18 @@ object OatCustomerETL {
                 val sql =
                     """
                       |select  id
-                      | from bigdata_profile.base
+                      | from bigdata_profile.base_copy1
                       |where customer_id=?
                     """.stripMargin
                 val SqlBaseUpdate =
                     """
-                      |update bigdata_profile.base
+                      |update bigdata_profile.base_copy1
                       |set customer_id = ?,name =?,gender =?,birthday =?,luna_birthday =?,province =?,city =?,district=?,handset =?,handset2 =?,qq_code =?,ty_code =?
                       |where customer_id = ?
                     """.stripMargin
                 val SqlOaUpdate =
                     """
-                      |update bigdata_profile.oa
+                      |update bigdata_profile.oa_copy1
                       |set total_cash=?,customer_grade=?,customer_type=?,customer_source=?,total_score=?,lock_score=?,used_score=?,can_use_score=?,traced_at=?,locked_at=?,first_sale_date=?
                       |where base_id = ?
                     """.stripMargin
@@ -129,13 +130,13 @@ object OatCustomerETL {
                 val SqlBaseInsert =
                     """
                       |insert into
-                      |bigdata_profile.base(customer_id,name,gender,birthday,luna_birthday,province,city,district,handset,handset2,qq_code,ty_code)
+                      |bigdata_profile.base_copy1(customer_id,name,gender,birthday,luna_birthday,province,city,district,handset,handset2,qq_code,ty_code)
                       |values(?,?,?,?,?,?,?,?,?,?,?,?)
                     """.stripMargin
                 val SqlOaInsert =
                     """
                       |insert into
-                      | bigdata_profile.oa(total_cash,customer_grade,customer_type,customer_source,total_score,lock_score,used_score,can_use_score,traced_at,locked_at,first_sale_date,base_id,customer_id)
+                      | bigdata_profile.oa_copy1(total_cash,customer_grade,customer_type,customer_source,total_score,lock_score,used_score,can_use_score,traced_at,locked_at,first_sale_date,base_id,customer_id)
                       |values(?,?,?,?,?,?,?,?,?,?,?,?,?)
                     """.stripMargin
                 try {

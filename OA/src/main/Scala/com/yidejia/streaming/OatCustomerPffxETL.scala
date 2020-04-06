@@ -24,14 +24,15 @@ object OatCustomerPffxETL {
     private val groupid = "OatCustomerPffx"
 
     def main(args: Array[String]): Unit = {
-        val sparkConf = new SparkConf().setAppName("Oat_customerETL").setMaster("local[*]")
+        val sparkConf = new SparkConf().setAppName("Oat_customerETL")
+//            .setMaster("local[*]")
             .set("spark.streaming.kafka.maxRatePerPartition", "300")
             .set("spark.streaming.backpressure.enabled", "true")
             .set("spark.streaming.stopGracefullyOnShutdown", "true")
         val ssc = new StreamingContext(sparkConf, Seconds(5))
         val topics = Array(Constant.TOPIC_CUSTOMER_PFFX)
         val kafkaMap: Map[String, Object] = Map[String, Object](
-            "bootstrap.servers" -> "hadoop112:9092,hadoop113:9092,hadoop114:9092",
+            "bootstrap.servers" -> "172.16.50.247:9092,172.16.50.246:9092,172.16.50.246:9092",
             "key.deserializer" -> classOf[StringDeserializer],
             "value.deserializer" -> classOf[StringDeserializer],
             "group.id" -> groupid,
@@ -91,12 +92,12 @@ object OatCustomerPffxETL {
                 val sql =
                     """
                       |select  customer_id
-                      | from bigdata_profile.base
+                      | from bigdata_profile.base_copy1
                       |where customer_id=?
                     """.stripMargin
                 val SqlCustomerPffxUpdate =
                     """
-                      |update bigdata_profile.oa
+                      |update bigdata_profile.oa_copy1
                       |set skin_type=?,is_allergy=?,skin_color=?,improve_type=?
                       |where customer_id = ?
                     """.stripMargin
